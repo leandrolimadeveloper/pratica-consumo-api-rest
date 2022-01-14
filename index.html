@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carros</title>
+</head>
+<body>
+    
+    <!-- <header>
+        <nav>
+            <ul>
+                <li></li>
+            </ul>
+        </nav>
+    </header> -->
+    
+    <main>
+        <section>
+            <h1>Carros</h1>
+            <ul id="carros"></ul>            
+        </section>
+
+        <section>
+            <h2>Cadastrar novo carro</h2>
+            <input type="text" id="modelo" placeholder="Modelo"><br>
+            <input type="text" id="montadora" placeholder="Montadora"><br>
+            <input type="number" id="ano" placeholder="Ano"><br><br>
+            <button type="button" onclick="cadastrarCarro()">Cadastrar</button><br>
+        </section>
+        <br>
+        <hr>
+        
+        <section>
+            <h2>Editar carro</h2>
+            <input type="number" id="editId" placeholder="id"><br>
+            <input type="text" id="editModelo" placeholder="Modelo"><br>
+            <input type="text" id="editMontadora" placeholder="Montadora"><br>
+            <input type="number" id="editAno" placeholder="Ano"><br><br>
+            <button type="button" onclick="atualizarDados()">Editar</button>
+        </section>
+    </main>
+    
+    <!-- <footer>
+
+    </footer> -->
+    
+    <script src="sweetAlert2.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script>
+        axios.get('http://localhost:3000/carros').then(response => {
+            let carros = response.data
+            let list = document.getElementById('carros')
+
+            // Botões
+            carros.forEach(carro => {
+                let item = document.createElement('li')
+                
+                item.setAttribute('data-id', carro.id)
+                item.setAttribute('data-modelo', carro.modelo)
+                item.setAttribute('data-montadora', carro.montadora)
+                item.setAttribute('data-ano', carro.ano)
+                
+                list.innerHTML += '<br>'
+                item.innerHTML = `Modelo: ${carro.modelo}<br> Montadora: ${carro.montadora}<br> Ano: ${carro.ano}<br><br>`
+                
+                list.appendChild(item)
+                
+                
+                // Botão Delete
+                let deleteBtn = document.createElement('button')
+                deleteBtn.innerHTML = 'Deletar'
+                item.appendChild(deleteBtn)
+                
+                deleteBtn.addEventListener('click', function() {
+                    deletarCarro(item)
+                })
+
+                // Botão Editar
+                let editarBtn = document.createElement('button')
+                editarBtn.innerHTML = 'Editar'
+                item.appendChild(editarBtn)
+
+                editarBtn.addEventListener('click', function() {
+                    carregarInput(item)
+                })
+
+                
+            });
+        }).catch(err => {
+            console.log(err)
+        })
+
+        function limparDisplay() {
+            modeloInput = document.getElementById('modelo').value = ''
+            montadoraInput = document.getElementById('montadora').value = ''
+            anoInput = document.getElementById('ano').value = ''
+        }
+
+        // Cadastrar
+        function cadastrarCarro() {
+            let modeloInput = document.getElementById('modelo')
+            let montadoraInput = document.getElementById('montadora')
+            let anoInput = document.getElementById('ano')
+
+            let carro = {
+                modelo: modeloInput.value,
+                montadora: modeloInput.value,
+                ano: anoInput.value
+            }
+
+            console.log(carro)
+
+            axios.post('http://localhost:3000/carro', carro).then(response => {
+                if(response.status == 200) {
+                    Swal.fire('Carro cadastrado')
+                }
+            }).catch(err => {
+                console.log(err)
+            })
+            
+            limparDisplay()
+        }
+
+        // Deletar
+        function deletarCarro(listItem) {
+            let id = listItem.getAttribute('data-id')
+            console.log(id)
+            axios.delete('http://localhost:3000/carro/' + id).then(response => {
+                Swal.fire('Carro deletado')
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+
+        // Puxar dados para o input
+        function carregarInput(listItem) {
+            console.log(listItem)
+
+            let id = listItem.getAttribute('data-id')
+            let modelo = listItem.getAttribute('data-modelo')
+            let montadora = listItem.getAttribute('data-montadora')
+            let ano = listItem.getAttribute('data-ano')
+
+            document.getElementById('editId').value = id
+            document.getElementById('editModelo').value = modelo
+            document.getElementById('editMontadora').value = montadora
+            document.getElementById('editAno').value = ano
+        }
+
+        // Atualizar dados 
+        function atualizarDados(listItem) {
+            let idInput = document.getElementById('editId')
+            let modeloInput = document.getElementById('editModelo')
+            let montadoraInput = document.getElementById('editMontadora')
+            let anoInput = document.getElementById('editAno')
+
+            let carro = {
+                modelo: modeloInput.value,
+                montadora: montadoraInput.value,
+                ano: anoInput.value
+            }
+
+            let id = idInput.value
+
+            axios.put('http://localhost:3000/carro/' + id, carro).then(response => {
+                Swal.fire('Carro editado')
+            }).catch(err => {
+                console.log(err)
+            })
+        }
+    </script>
+
+</body>
+</html>
