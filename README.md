@@ -1,5 +1,5 @@
 # pratica-consumo-api-rest
-Criação e consumo de API REST (em JSON) - PRÁTICA
+Criação e consumo de API REST - PRÁTICA
 
 ## Sobre
 Prática do conteúdo sobre criação e consumo de API REST, do curso Formação Node.js, do instrutor Victor Lima, na plataforma Udemy.
